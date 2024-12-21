@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import shutil
 import time
-from openpyxl import load_workbook
+from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -118,3 +118,20 @@ for batch_start in range(0, len(excel_files), batch_size):
             else:
                 time_column.append(f'{day_month} {time_data[i-1]} - {time_data[i]}')
 
+for i in range(len(buy)):
+    buy_sell_max.append(max(buy[i], sell[i]))
+
+# Create a new workbook and select the active worksheet
+wb = Workbook()
+ws = wb.active
+
+# Add a header to the worksheet
+ws.append(["Time", "Market Clearing Price", "Max of BUY and SELL"])  # Adds "Time" and "Value" as the header
+#print(len(time_column), "AAA", len(market_clearing_price), "AAA", len(buy_sell_max))
+# Write data into the worksheet
+for time_value, mcp, max in zip(time_column, market_clearing_price, buy_sell_max):
+    #print(time_value, mcp, max)
+    ws.append([time_value, mcp, max])  # Each value goes into a new row
+
+# Save the workbook
+wb.save("stored_data.xlsx")
